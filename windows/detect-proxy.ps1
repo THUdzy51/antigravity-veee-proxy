@@ -72,8 +72,10 @@ Write-Host "检测到本地 HTTP 代理: $proxyUrl"
 $curlCmd = Get-Command "curl.exe" -ErrorAction SilentlyContinue
 if ($curlCmd) {
     Write-Host "正在测试连通性: $TestUrl ..."
-    & curl.exe -fsSIL --max-time 6 -x $proxyUrl $TestUrl | Select-Object -First 3
-    if ($LASTEXITCODE -eq 0) {
+    $curlOut = & curl.exe -fsSIL --max-time 6 -x $proxyUrl $TestUrl 2>&1
+    $curlExit = $LASTEXITCODE
+    $curlOut | Select-Object -First 3
+    if ($curlExit -eq 0) {
         Write-Host "[OK] 代理 $proxyUrl 可正常连通。"
     } else {
         Write-Host "[WARN] 代理 $proxyUrl 测试失败，请检查 Veee 连接状态。"
